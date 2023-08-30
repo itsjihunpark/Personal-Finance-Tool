@@ -5,6 +5,7 @@
 package com.mycompany.personalaccountant;
 
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -92,7 +93,27 @@ public class PersonalAccountant {
                                 .map(c->Transaction.inCatagories.indexOf(c)+" "+c)
                                 .forEach(c->System.out.println(c));
                         System.out.println("------------");
-                        int index = s.nextInt();
+                        int index=0;
+                        do{
+                            try{
+                                index = s.nextInt();
+                                if(index>Transaction.inCatagories.size()-1||index<0)
+                                {
+                                    throw(new IllegalArgumentException());
+                                }
+                                break;
+                            }
+                            catch(InputMismatchException ime){
+                              
+                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.inCatagories.size()-1));
+                                s.next();
+                                
+                            }
+                            catch(IllegalArgumentException iae)
+                            {
+                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.inCatagories.size()-1));
+                            }
+                        }while(true);
                         System.out.println("You have picked" + Transaction.inCatagories.get(index));
                         t.setCatagory(Transaction.inCatagories.get(index));
                     }
@@ -102,11 +123,33 @@ public class PersonalAccountant {
                                 .map(c->Transaction.outCatagories.indexOf(c)+" "+c)
                                 .forEach(c->System.out.println(c));
                         System.out.println("------------");
-                        int index = s.nextInt();
+                        int index=0;
+                        do{
+                            try{
+                                index = s.nextInt();
+                                if(index>Transaction.outCatagories.size()-1||index<0)
+                                {
+                                    throw(new IllegalArgumentException());
+                                }
+                                break;
+                            }
+                            catch(InputMismatchException ime){
+                              
+                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));
+                                s.next();
+                                
+                            }
+                            catch(IllegalArgumentException iae)
+                            {
+                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));
+                            }
+                        }while(true);
+                        
                         System.out.println("You have picked " + Transaction.outCatagories.get(index));
                         t.setCatagory(Transaction.outCatagories.get(index));
                     }
                 });
+        s.close();
         System.out.println("All transaction Catagorised, creating. Putting transactions into catagories now \n");
     }
 }
