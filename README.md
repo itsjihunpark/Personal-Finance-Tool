@@ -6,7 +6,7 @@ Completed so far
 4. Exception handling for incorrect inputs
 
 To do next
-1. Adding functionality to go to previous transaction to change if mistake was made
-2. Feature tp save progress to come back to continue
+1. Functionality to go to previous transaction to change if mistake was made
+2. Feature to save progress to come back to continue
 
 
