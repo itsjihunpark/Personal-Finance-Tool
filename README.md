@@ -1,5 +1,5 @@
-Input: Bank Transaction Statement in CSV and Input on which catagory each transaction belongs in
-Output: Total amount spent per catagory
+- Input: Bank Transaction Statement in CSV and Input on which catagory each transaction belongs in
+- Output: Total amount spent per catagory
 
 # Personal-Finance-Tool
 Completed so far
