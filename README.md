@@ -1,7 +1,8 @@
+# Personal-Finance-Tool
+
 - Input: Bank Transaction Statement in CSV and Input on which catagory each transaction belongs in
 - Output: Total amount spent per catagory
 
-# Personal-Finance-Tool
 Completed so far
 1. Reading LLOYDS bank csv format and modelling them into a list of Transaction Object
 2. Taking user input per transaction object to put them into a map of catagory names and list of transaction object that belongs in each catagory
