@@ -5,7 +5,6 @@
 package com.mycompany.personalaccountant;
 
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -47,8 +46,11 @@ public class PersonalAccountant {
     {
         //NEED EXCEPTION HANDLING
         //NEED OPTION TO GO TO PREVIOUS TRANSACTION IN CASE OF MISTAKE
+        //replace first part of lambda to for loop with index for e
+        
         transactions.stream()
                 .forEach(t->{
+                    
                     System.out.println("---------------\nWhat catagory is the below transaction?");
                     System.out.println(t);
                     
@@ -61,18 +63,16 @@ public class PersonalAccountant {
                         int index=0;
                         do{
                             try{
-                                index = s.nextInt();
+                                index = Integer.parseInt(s.nextLine());
                                 if(index>Transaction.inCatagories.size()-1||index<0)
                                 {
                                     throw(new IllegalArgumentException());
                                 }
                                 break;
                             }
-                            catch(InputMismatchException ime){
-                              
-                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.inCatagories.size()-1));
-                                s.next();
-                                
+                            catch(NumberFormatException nfe)
+                            {
+                                System.out.println("Incorrect input format. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));;
                             }
                             catch(IllegalArgumentException iae)
                             {
@@ -91,18 +91,17 @@ public class PersonalAccountant {
                         int index=0;
                         do{
                             try{
-                                index = s.nextInt();
+                                index = Integer.parseInt(s.nextLine());
                                 if(index>Transaction.outCatagories.size()-1||index<0)
                                 {
                                     throw(new IllegalArgumentException());
                                 }
+                                
                                 break;
                             }
-                            catch(InputMismatchException ime){
-                              
-                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));
-                                s.next();
-                                
+                            catch(NumberFormatException nfe)
+                            {
+                                System.out.println("Incorrect input format. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));;
                             }
                             catch(IllegalArgumentException iae)
                             {
@@ -116,6 +115,7 @@ public class PersonalAccountant {
                 });
         s.close();
         System.out.println("All transaction Catagorised, creating. Putting transactions into catagories now \n");
+    
     }
     private static void aggregateTotalPerCatagory(List<Transaction> transactions)
     {
