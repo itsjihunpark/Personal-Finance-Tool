@@ -18,67 +18,32 @@ import java.util.Set;
  */
 public class PersonalAccountant {
     //Reads bank CSV file, model them as Transaction objects and is added to a list
-    private static Scanner s = new Scanner(System.in);
+    private static final Scanner s = new Scanner(System.in);
     
-    private static Map<String, List<Transaction>> outTransactionsMap = new HashMap<>();
-    private static Map<String, List<Transaction>> inTransactionsMap = new HashMap<>();
+    private static final List<Transaction> transactions = DataAccess.readLLOYDSCSV("transactions.csv");
+    
+    private static final Map<String, List<Transaction>> outTransactionsMap = new HashMap<>();
+    private static final Map<String, List<Transaction>> inTransactionsMap = new HashMap<>();
     
     public static void runMonthlyAccountPrep(List<Transaction> transactionss) { 
         
-        List<Transaction> transactions = DataAccess.readLLOYDSCSV("transactions.csv");
+        
         printTransactionsDateRange(transactions);
         //from the list take the first and last item to get the date range of the bank csv
        
-        catagoriseWithUserInput(transactions);
-        //Use stream and then filter and collect into an arraylist of transaction in and out
-               
-        assignTransactionToCatagories(transactions);
-
+        addCatagoryFeatureToTransaction(transactions);
+        //Use stream and then filter and collect into an arraylist of transaction in and out    
+        aggregateTotalPerCatagory(transactions);
         
-        writeToCSVCatagorisedTransactions(transactions);
-        
-        String csv="Out Transactions,\n"+getTotalSpendingPerCatagoryCSV(outTransactionsMap)+"\n\nIn Transaction\n"+getTotalSpendingPerCatagoryCSV(inTransactionsMap);
-        DataAccess.writeTotalSpendingPerCatagoryToCSV("TotalAmountPerCatagory.csv", csv);
+        DataAccess.writeToCSV("output.csv", getTransactionWithCatagoryFeatureToCSV(transactions)); 
+        DataAccess.writeToCSV("TotalAmountPerCatagory.csv", getTotalPerCatagoryCSV());
     } 
-    
-    private static String getTotalSpendingPerCatagoryCSV(Map<String, List<Transaction>> transactions)
-    {
-        Set<String> catagoryKeys = transactions.keySet();
-        String transactionCatagoryCSV = "Catagory,Spending";
-        for(String key: catagoryKeys)
-        {
-            transactionCatagoryCSV=transactionCatagoryCSV+"\n"+key+","+transactions.get(key).stream().mapToDouble(t->t.getAmount()).sum();
-        }
-        return transactionCatagoryCSV;
-    }
-    private static void writeToCSVCatagorisedTransactions(List<Transaction> transactions)
-    {
-        String transactionsCSV="";
-        Iterator<Transaction> iTransaction = transactions.iterator();
-        while(iTransaction.hasNext())
-        {
-            transactionsCSV = transactionsCSV + iTransaction.next()+"\n";
-        }
-        DataAccess.writeCatagorisedTransactionToCSV("output.csv", transactionsCSV);
-    }
-    
-    private static void assignTransactionToCatagories(List<Transaction> transactions)
-    {
-        List<Transaction> outTransactions=transactions.stream().filter(t->t.isMoneyIn()==false).collect(Collectors.toList());
-        List<Transaction> inTransactions =transactions.stream().filter(t->t.isMoneyIn()==true).collect(Collectors.toList());
-        
-        Transaction.inCatagories.stream()
-                .forEach(c->inTransactionsMap.put(c,inTransactions.stream().filter(t->t.getCatagory().equals(c)).collect(Collectors.toList())));
-        Transaction.outCatagories.stream()
-                .forEach(c->outTransactionsMap.put(c,outTransactions.stream().filter(t->t.getCatagory().equals(c)).collect(Collectors.toList()) ));
-        
-    }
     private static void printTransactionsDateRange(List<Transaction> transactions)
     {
         String date_range = "from "+transactions.get(transactions.size()-1).getTransactiondate()+" to "+ transactions.get(0).getTransactiondate();
         System.out.format("For the date range %s\n", date_range);
     }
-    private static void catagoriseWithUserInput(List<Transaction> transactions)
+    private static void addCatagoryFeatureToTransaction(List<Transaction> transactions)
     {
         //NEED EXCEPTION HANDLING
         //NEED OPTION TO GO TO PREVIOUS TRANSACTION IN CASE OF MISTAKE
@@ -114,7 +79,7 @@ public class PersonalAccountant {
                                 System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.inCatagories.size()-1));
                             }
                         }while(true);
-                        System.out.println("You have picked" + Transaction.inCatagories.get(index));
+                        System.out.println("You have picked " + Transaction.inCatagories.get(index));
                         t.setCatagory(Transaction.inCatagories.get(index));
                     }
                     else{
@@ -152,4 +117,48 @@ public class PersonalAccountant {
         s.close();
         System.out.println("All transaction Catagorised, creating. Putting transactions into catagories now \n");
     }
+    private static void aggregateTotalPerCatagory(List<Transaction> transactions)
+    {
+        List<Transaction> outTransactions=transactions.stream().filter(t->t.isMoneyIn()==false).collect(Collectors.toList());
+        List<Transaction> inTransactions =transactions.stream().filter(t->t.isMoneyIn()==true).collect(Collectors.toList());
+        
+        Transaction.inCatagories.stream()
+                .forEach(c->inTransactionsMap.put(c,inTransactions.stream().filter(t->t.getCatagory().equals(c)).collect(Collectors.toList())));
+        Transaction.outCatagories.stream()
+                .forEach(c->outTransactionsMap.put(c,outTransactions.stream().filter(t->t.getCatagory().equals(c)).collect(Collectors.toList()) ));
+        
+    }
+
+   
+    private static String getTransactionWithCatagoryFeatureToCSV(List<Transaction> transactions)
+    {
+        String transactionsCSV="date,type,account,amount,in/out,catagory\n";
+        Iterator<Transaction> iTransaction = transactions.iterator();
+        while(iTransaction.hasNext())
+        {
+            transactionsCSV = transactionsCSV + iTransaction.next()+"\n";
+        }
+        return transactionsCSV;
+        
+    }
+    private static String getTotalPerCatagoryCSV()
+    {
+      String csv=
+                "Out Transactions,\n"
+                +getTotalSpendingPerCatagoryCSV(outTransactionsMap)
+                +"\n\nIn Transaction\n"
+                +getTotalSpendingPerCatagoryCSV(inTransactionsMap);
+           return csv;  
+    }
+    private static String getTotalSpendingPerCatagoryCSV(Map<String, List<Transaction>> transactions)
+    {
+        Set<String> catagoryKeys = transactions.keySet();
+        String transactionCatagoryCSV = "Catagory,Spending";
+        for(String key: catagoryKeys)
+        {
+            transactionCatagoryCSV=transactionCatagoryCSV+"\n"+key+","+transactions.get(key).stream().mapToDouble(t->t.getAmount()).sum();
+        }
+        return transactionCatagoryCSV;
+    }
+    
 }

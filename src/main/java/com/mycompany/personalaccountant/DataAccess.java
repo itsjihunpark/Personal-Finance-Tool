@@ -55,7 +55,7 @@ public class DataAccess {
         }
        return transactions;
     }
-    public static void writeCatagorisedTransactionToCSV(String filepath, String csv)
+    public static void writeToCSV(String filepath, String csv)
     {
         try{
             BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
@@ -68,19 +68,4 @@ public class DataAccess {
             
         }
     }    
-    public static void writeTotalSpendingPerCatagoryToCSV(String filepath, String csv)
-    {
-        try{
-            BufferedWriter bw;
-            bw = new BufferedWriter(new FileWriter(filepath));
-            bw.write("");//empties previous
-            bw.write(csv);
-            bw.close();
-        }   
-        catch(IOException ioe)
-        {
-            
-        }
-    }
-    
 }
