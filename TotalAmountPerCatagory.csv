@@ -1,6 +1,6 @@
 Out Transactions,
 Catagory,Spending
-Food-Eatout,145.59
+Food-Eatout,155.59
 Entertainment,0.0
 Accomodation,0.0
 Travel-Self,0.0
@@ -12,14 +12,14 @@ Self Transfer,0.0
 Gym,0.0
 Travel-Daniela,0.0
 Stuff,0.0
-Laundry,10.0
+Laundry,0.0
 Rent,0.0
 Other,0.0
 
 In Transaction
 Catagory,Spending
-Self-Transfers,0.0
+Self-Transfers,1900.0
 Refunds,0.0
-Allowance,1900.0
+Allowance,0.0
 Job,0.0
 Other,0.0

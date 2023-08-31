@@ -48,74 +48,86 @@ public class PersonalAccountant {
         //NEED OPTION TO GO TO PREVIOUS TRANSACTION IN CASE OF MISTAKE
         //replace first part of lambda to for loop with index for e
         
-        transactions.stream()
-                .forEach(t->{
-                    
-                    System.out.println("---------------\nWhat catagory is the below transaction?");
-                    System.out.println(t);
-                    
-                    if(t.isMoneyIn()){
-                        System.out.println("------------");
-                        Transaction.inCatagories.stream()
-                                .map(c->Transaction.inCatagories.indexOf(c)+" "+c)
-                                .forEach(c->System.out.println(c));
-                        System.out.println("------------");
-                        int index=0;
-                        do{
-                            try{
-                                index = Integer.parseInt(s.nextLine());
-                                if(index>Transaction.inCatagories.size()-1||index<0)
-                                {
-                                    throw(new IllegalArgumentException());
-                                }
-                                break;
-                            }
-                            catch(NumberFormatException nfe)
-                            {
-                                System.out.println("Incorrect input format. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));;
-                            }
-                            catch(IllegalArgumentException iae)
-                            {
-                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.inCatagories.size()-1));
-                            }
-                        }while(true);
-                        System.out.println("You have picked " + Transaction.inCatagories.get(index));
-                        t.setCatagory(Transaction.inCatagories.get(index));
+        for(int i=0; i<transactions.size(); i++){   
+                
+                if(i!=0)
+                {
+                    System.out.println("\nEnter Y to edit previous transaction, or anything else to continue");
+                    String checkPrev = s.nextLine();
+                    if(checkPrev.equals("y")){
+                        i-=1;                   
                     }
                     else{
-                        System.out.println("------------");
-                        Transaction.outCatagories.stream()
-                                .map(c->Transaction.outCatagories.indexOf(c)+" "+c)
-                                .forEach(c->System.out.println(c));
-                        System.out.println("------------");
-                        int index=0;
-                        do{
-                            try{
-                                index = Integer.parseInt(s.nextLine());
-                                if(index>Transaction.outCatagories.size()-1||index<0)
-                                {
-                                    throw(new IllegalArgumentException());
-                                }
-                                
-                                break;
-                            }
-                            catch(NumberFormatException nfe)
-                            {
-                                System.out.println("Incorrect input format. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));;
-                            }
-                            catch(IllegalArgumentException iae)
-                            {
-                                System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));
-                            }
-                        }while(true);
-                        
-                        System.out.println("You have picked " + Transaction.outCatagories.get(index));
-                        t.setCatagory(Transaction.outCatagories.get(index));
+                        //Can catch exception in this case
                     }
-                });
+                }
+                Transaction t=transactions.get(i);
+                System.out.println("---------------\nWhat catagory is the below transaction?");
+                System.out.println(t);
+                if(t.isMoneyIn()){
+                    System.out.println("------------");
+                    Transaction.inCatagories.stream()
+                            .map(c->Transaction.inCatagories.indexOf(c)+" "+c)
+                            .forEach(c->System.out.println(c));
+                    System.out.println("------------");
+                    int index=0;
+                    do{
+                        try{
+                            String input =s.nextLine();
+                            index = Integer.parseInt(input);
+                            if(index>Transaction.inCatagories.size()-1||index<0)
+                            {
+                                throw(new IllegalArgumentException());
+                            }
+                            break;
+                        }
+                        catch(NumberFormatException nfe)
+                        {
+                            System.out.println("Incorrect input format. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));;
+                        }
+                        catch(IllegalArgumentException iae)
+                        {
+                            System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.inCatagories.size()-1));
+                        }
+                    }while(true);
+                    System.out.println("You have picked " + Transaction.inCatagories.get(index));
+                    t.setCatagory(Transaction.inCatagories.get(index));
+                }
+                else{
+                    System.out.println("------------");
+                    Transaction.outCatagories.stream()
+                            .map(c->Transaction.outCatagories.indexOf(c)+" "+c)
+                            .forEach(c->System.out.println(c));
+                    System.out.println("------------");
+                    int index=0;
+                    do{
+                        try{
+                            String input =s.nextLine();
+                            index = Integer.parseInt(input);
+                            if(index>Transaction.outCatagories.size()-1||index<0)
+                            {
+                                throw(new IllegalArgumentException());
+                            }
+                            break;
+                        }
+                        catch(NumberFormatException nfe)
+                        {
+                            System.out.println("Incorrect input format. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));;
+                        }
+                        catch(IllegalArgumentException iae)
+                        {
+                            System.out.println("Incorrect input. Please enter a number between 0 and "+(Transaction.outCatagories.size()-1));
+                        }
+                    }while(true);
+
+                    System.out.println("You have picked " + Transaction.outCatagories.get(index));
+                    t.setCatagory(Transaction.outCatagories.get(index));
+                }
+            }
+            
+            System.out.println("All transaction Catagorised, creating. Putting transactions into catagories now \n");
+        
         s.close();
-        System.out.println("All transaction Catagorised, creating. Putting transactions into catagories now \n");
-    
     }
     private static void aggregateTotalPerCatagory(List<Transaction> transactions)
     {
